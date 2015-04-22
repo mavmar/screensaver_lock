@@ -1,0 +1,82 @@
+#!/bin/bash
+
+# Blokada wygaszacza ekranu dla najbardziej
+# popularnych wtyczek programu firefox.
+
+# Screensaver locker for most popular firefox plugins.
+
+gsettings set org.cinnamon.desktop.screensaver idle-activation-enabled true
+gsettings set org.cinnamon.settings-daemon.plugins.power active true
+
+wygaszacz_zablokowany=0
+
+while true; do
+	sleep 60
+	plugin_on=0
+
+	# Shockwave Flash
+	if pgrep -f "/usr/lib/adobe-flashplugin/libflashplayer.so" ; then
+		plugin_on=1
+	fi
+
+	# Shockwave Flash - from Adobe
+	if pgrep -f "/usr/lib/flashplugin-installer/libflashplayer.so" ; then
+		plugin_on=1
+	fi
+
+	# Shockwave Flash - Pipelight
+	if pgrep -f "/usr/lib/pipelight/libpipelight-flash.so" ; then
+		plugin_on=1
+	fi
+
+	# Widevine Media Optimizer
+	if pgrep -f "/usr/lib/pipelight/libpipelight-widevine.so" ; then
+		plugin_on=1
+	fi
+
+	# Silverlight Plug-In
+	if pgrep -f "/usr/lib/pipelight/libpipelight-silverlight5.1.so" ; then
+                plugin_on=1
+        fi
+	
+	# QuickTime Plug-in
+	if pgrep -f "/usr/lib/mozilla/plugins/libtotem-narrowspace-plugin.so" ; then
+                plugin_on=1
+        fi
+
+	# VLC Multimedia Plugin
+	if pgrep -f "/usr/lib/mozilla/plugins/libtotem-cone-plugin.so" ; then
+                plugin_on=1
+        fi
+
+	# Windows Media Player Plug-in
+	if pgrep -f "/usr/lib/mozilla/plugins/libtotem-gmp-plugin.so" ; then
+                plugin_on=1
+        fi
+
+	# DivX Web Player
+	if pgrep -f "/usr/lib/mozilla/plugins/libtotem-mully-plugin.so" ; then
+                plugin_on=1
+        fi
+	
+	# VLC Web Plugin
+	if pgrep -f "/usr/lib/mozilla/plugins/libvlcplugin.so" ; then
+                plugin_on=1
+        fi
+
+        wygaszacz1=`gsettings get org.cinnamon.desktop.screensaver idle-activation-enabled`
+	wygaszacz2=`gsettings get org.cinnamon.settings-daemon.plugins.power active`
+
+        if [ "$plugin_on" = "1" ] && [ "$wygaszacz1" = "true" ] \
+		&& [ "$wygaszacz2" = "true" ]; then
+            gsettings set org.cinnamon.desktop.screensaver idle-activation-enabled false
+            gsettings set org.cinnamon.settings-daemon.plugins.power active false
+	    wygaszacz_zablokowany=1
+        elif [ "$plugin_on" = "0" ] && [ "$wygaszacz1" = "false" ] \
+                && [ "$wygaszacz2" = "false" ] && [ "$wygaszacz_zablokowany" = "1" ]; then
+            gsettings set org.cinnamon.desktop.screensaver idle-activation-enabled true
+	    gsettings set org.cinnamon.settings-daemon.plugins.power active true
+            wygszacz_zablokowany=0
+        fi
+
+done
