@@ -1,0 +1,5 @@
+git clone  https://github.com/mavmar/screensaver_lock.git
+cd ./screensaver_lock
+chmod +x screensaver_lock
+sudo cp screensaver_lock /usr/local/bin/screensaver_lock
+add /usr/local/bin/screensaver_lock to startup programs in cinnamon settings
